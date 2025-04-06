@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { useDispatch, useSelector } from "react-redux";
+import { add, decrement, increment, markDone, remove } from "./redux/slices/couter";
+import DemoComponent from "./DemoComponent";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [title, setTitle] = useState("");
+  const { todos } = useSelector((state) => state.count);
+  const dispatch = useDispatch();
 
+  const addTodo = () => {
+    dispatch(add({ todo: { id: todos.length + 1, title, completed: false } }));
+  };
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input type="text" onChange={(e) => setTitle(e.target.value)} />
+        <button onClick={addTodo}>add</button>
+        {todos.map((todo) => (
+          <div key={todo.id}>
+            {todo.title}{" "}
+            <input type="checkbox" value={todo.completed} onChange={() => dispatch(markDone({id: todo.id}))} id="" />
+            <button onClick={() => dispatch(remove({ id: todo.id }))}>
+              Remove
+            </button>
+          </div>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <DemoComponent />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
